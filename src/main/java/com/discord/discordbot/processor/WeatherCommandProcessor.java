@@ -22,14 +22,15 @@ import static java.util.Arrays.asList;
 import static org.springframework.http.HttpMethod.GET;
 
 @Component
-public class WeatherCommandProcessor {
+public class WeatherCommandProcessor implements CommandProcessor {
     @Value("${weather.token}")
     private String weatherToken;
 
     @Value("${weather.url}")
     private String weatherUrl;
 
-    public void weatherCommand(GenericCommandEvent command) {
+    @Override
+    public void processCommand(GenericCommandEvent command) {
 
         List<String> message = asList(command.getEvent().getMessage().getContentRaw().split(" "));
 

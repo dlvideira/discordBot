@@ -23,7 +23,7 @@ import static java.lang.String.format;
 import static org.springframework.http.HttpMethod.GET;
 
 @Component
-public class VideoCommandProcessor {
+public class VideoCommandProcessor implements CommandProcessor {
     @Value("${image.token}")
     private String imageToken;
 
@@ -32,7 +32,8 @@ public class VideoCommandProcessor {
 
     private int page = new Random().nextInt(10) + 1;
 
-    public void videoCommand(GenericCommandEvent command) {
+    @Override
+    public void processCommand(GenericCommandEvent command) {
 
         String[] message = command.getEvent().getMessage().getContentRaw().split(" ");
 
@@ -48,7 +49,7 @@ public class VideoCommandProcessor {
             } else {
                 //TODO validar se é a melhor opção.
                 page = 1;
-                videoCommand(command);
+                processCommand(command);
             }
         }
     }

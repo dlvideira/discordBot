@@ -12,8 +12,10 @@ import java.util.Set;
 import static java.lang.String.format;
 
 @Component
-public class UnknownCommandProcessor {
-    public void unknownCommand(GenericCommandEvent command) {
+public class UnknownCommandProcessor implements CommandProcessor{
+
+    @Override
+    public void processCommand(GenericCommandEvent command) {
         command.getEvent().getChannel().sendMessage(getAvailableCommands()).queue();
     }
 

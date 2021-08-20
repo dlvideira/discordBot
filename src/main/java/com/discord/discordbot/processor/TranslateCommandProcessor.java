@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import static org.springframework.http.HttpMethod.POST;
 
 @Component
-public class TranslateCommandProcessor {
+public class TranslateCommandProcessor implements CommandProcessor {
     @Value("${translate.token}")
     private String translateToken;
 
@@ -24,7 +24,8 @@ public class TranslateCommandProcessor {
     @Value("${translate.url}")
     private String translateUrl;
 
-    public void translateCommand(GenericCommandEvent command) {
+    @Override
+    public void processCommand(GenericCommandEvent command) {
 
         String[] message = command.getEvent().getMessage().getContentRaw().split(" ");
 

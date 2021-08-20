@@ -25,7 +25,7 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.util.StringUtils.capitalize;
 
 @Component
-public class ImageCommandProcessor {
+public class ImageCommandProcessor implements CommandProcessor{
     @Value("${image.token}")
     private String imageToken;
 
@@ -34,7 +34,8 @@ public class ImageCommandProcessor {
 
     private int page = new Random().nextInt(10) + 1;
 
-    public void imageCommand(GenericCommandEvent command) {
+    @Override
+    public void processCommand(GenericCommandEvent command) {
 
         String[] message = command.getEvent().getMessage().getContentRaw().split(" ");
 
@@ -50,7 +51,7 @@ public class ImageCommandProcessor {
             } else {
                 //TODO validar se é a melhor opção.
                 page = 1;
-                imageCommand(command);
+                processCommand(command);
             }
         }
     }
