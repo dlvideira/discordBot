@@ -8,36 +8,47 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Component
 public class CommandEventHandler {
 
     @Autowired
-    TranslateCommandProcessor translateCommandProcessor;
+    private TranslateCommandProcessor translateCommandProcessor;
 
     @Autowired
-    WeatherCommandProcessor weatherCommandProcessor;
+    private WeatherCommandProcessor weatherCommandProcessor;
 
     @Autowired
-    UnknownCommandProcessor unknownCommand;
+    private UnknownCommandProcessor unknownCommand;
 
     @Autowired
-    ImageCommandProcessor imageCommandProcessor;
+    private ImageCommandProcessor imageCommandProcessor;
 
     @Autowired
-    VideoCommandProcessor videoCommandProcessor;
+    private VideoCommandProcessor videoCommandProcessor;
 
     @Async
     @EventListener
     public void onApplicationEvent(GenericCommandEvent command) {
-        var readCommand = Arrays.stream(command.getEvent().getMessage().getContentRaw().split(" ")).findFirst().get();
+        Function<GenericCommandEvent, String> getCommand = CommandEventHandler::cleanEvent;
 
-        switch (readCommand) {
-            case "!translate" -> translateCommandProcessor.translateCommand(command);
-            case "!clima" -> weatherCommandProcessor.weatherCommand(command);
-            case "!imagem" -> imageCommandProcessor.imageCommand(command);
-            case "!video" -> videoCommandProcessor.videoCommand(command);
-            default -> unknownCommand.unknownCommand(command);
-        }
+        //TODO move
+        Consumer<String> execute = (commandString) -> {
+            switch (commandString) {
+                case "!translate" -> translateCommandProcessor.processCommand(command);
+                case "!clima" -> weatherCommandProcessor.processCommand(command);
+                case "!imagem" -> imageCommandProcessor.processCommand(command);
+                case "!video" -> videoCommandProcessor.processCommand(command);
+                default -> unknownCommand.processCommand(command);
+            }
+        };
+        execute.accept(getCommand.apply(command));
+    }
+
+    private static String cleanEvent(GenericCommandEvent commandString) {
+        return Arrays.stream(commandString.getEvent().getMessage().getContentRaw().split(" "))
+                .findFirst().orElse("Unknown");
     }
 }
