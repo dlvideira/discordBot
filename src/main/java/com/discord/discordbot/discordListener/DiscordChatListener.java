@@ -16,9 +16,9 @@ public class DiscordChatListener extends ListenerAdapter {
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         // esse é o evento de receber msg no chat
-        var readFirstWord = Arrays.stream(event.getMessage().getContentRaw().split(" ")).findFirst();
+        var readFirstWord = Arrays.stream(event.getMessage().getContentRaw().split(" ")).findFirst().orElse("Unknown");
 
-        if (readFirstWord.get().startsWith("!"))
+        if (readFirstWord.startsWith("!"))
             applicationEventPublisher.publishEvent(new GenericCommandEvent(event));
     }
 }
